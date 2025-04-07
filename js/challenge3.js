@@ -1,12 +1,39 @@
 // When the page is loaded an alert box should pop up with the Caption from the 2nd figure.
 const caption = document.querySelectorAll("figcaption")[1];
-window.addEventListener("load", (event) => {
-   alert(caption.innerText);
+window.addEventListener("load", () => {
+  alert(caption.innerText);
 });
 
-//When the mouse goes over an image three things should happen:
-// The background image of the display should change to the same image being hovered over.  
-// The text in the display should show the alt attribute of the image
-// The image should no longer be visible – but it should still take up the same amount of space.
-const images = document.querySelectorAll("img");
+// Shared update and reset logic
+const images = document.querySelectorAll(".thumbnail");
 const display = document.querySelector("#display");
+
+// Make all thumbnail images focusable for keyboard navigation
+images.forEach((image) => {
+   image.setAttribute("tabindex", "0");
+ });
+ 
+
+function updateDisplay(image) {
+  display.style.backgroundImage = `url(${image.src})`;
+  display.style.backgroundSize = "cover";
+  display.style.backgroundPosition = "center";
+  display.textContent = image.alt;
+  image.style.visibility = "hidden";
+}
+
+function resetDisplay(image) {
+  display.style.backgroundImage = "";
+  display.textContent = "Hover over an image below to display the image and the alt text.";
+  image.style.visibility = "visible";
+}
+
+images.forEach((image) => {
+  // Mouse interactions
+  image.addEventListener("mouseover", () => updateDisplay(image));
+  image.addEventListener("mouseout", () => resetDisplay(image));
+
+  // Keyboard accessibility
+  image.addEventListener("focus", () => updateDisplay(image));
+  image.addEventListener("blur", () => resetDisplay(image));
+});
